@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import project.personal.personalstoremanagementproject.controllers.AbstractApiController;
 import project.personal.personalstoremanagementproject.entities.UserAccount;
 import project.personal.personalstoremanagementproject.services.JwtService;
+import project.personal.personalstoremanagementproject.utils.MessageId;
 import project.personal.personalstoremanagementproject.utils.constants.ConstantEnum;
 import project.personal.personalstoremanagementproject.exceptions.ErrorCode;
 import project.personal.personalstoremanagementproject.repositories.UserRepository;
@@ -31,7 +32,7 @@ public class RegisterScreenController extends AbstractApiController<RegisterScre
      * @param registerScreenSendMailResult
      */
     public RegisterScreenController(AuthenticationManager authenticationManager, UserRepository userRepository, JwtService jwtService, RegisterScreenSendMailResult registerScreenSendMailResult) {
-        super(authenticationManager, userRepository, jwtService);
+        super(userRepository, jwtService);
         this.registerScreenSendMailResult = registerScreenSendMailResult;
     }
 
@@ -47,7 +48,7 @@ public class RegisterScreenController extends AbstractApiController<RegisterScre
         var user = userRepository.existsByEmailAndUsername(request.getEmail(), request.getUserName());
         if (user) {
             response.setSuccess(false);
-            response.setMessage(ErrorCode.VALIDATION_ERROR, "User already exists", detailErrorList);
+            response.setMessage(MessageId.E0000, "User already exists");
             return response;
         }
         // Generate password encoder
@@ -67,7 +68,7 @@ public class RegisterScreenController extends AbstractApiController<RegisterScre
         registerScreenSendMailResult.sendMail("RegisterScreen", newUser);
         // True
         response.setSuccess(true);
-        response.setMessage(ErrorCode.SUCCESS,"Create user successful", detailErrorList);
+        response.setMessage(MessageId.I0001,"Create user successful");
         return response;
     }
 
@@ -82,7 +83,7 @@ public class RegisterScreenController extends AbstractApiController<RegisterScre
         if (!detailErrorList.isEmpty()) {
             RegisterScreenResponse response = new RegisterScreenResponse();
             response.setSuccess(false);
-            response.setMessage(ErrorCode.VALIDATION_ERROR, "Validation errors occurred", detailErrorList);
+            response.setMessage(MessageId.E0000, "Validation errors occurred");
             return response;
         }
         return null;

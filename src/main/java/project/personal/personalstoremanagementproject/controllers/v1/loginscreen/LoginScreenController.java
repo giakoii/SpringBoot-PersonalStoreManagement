@@ -1,17 +1,13 @@
 package project.personal.personalstoremanagementproject.controllers.v1.loginscreen;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.personal.personalstoremanagementproject.controllers.AbstractApiController;
-import project.personal.personalstoremanagementproject.exceptions.ErrorCode;
+import project.personal.personalstoremanagementproject.exceptions.DetailError;
 import project.personal.personalstoremanagementproject.repositories.UserRepository;
 import project.personal.personalstoremanagementproject.services.JwtService;
-import project.personal.personalstoremanagementproject.exceptions.DetailError;
+import project.personal.personalstoremanagementproject.utils.MessageId;
 
 import java.util.List;
 
@@ -21,12 +17,15 @@ public class LoginScreenController extends AbstractApiController<LoginScreenRequ
 
     private final JwtService jwtService;
 
-    private final PasswordEncoder passwordEncoder;
-
-    public LoginScreenController(AuthenticationManager authenticationManager, UserRepository userRepository, JwtService jwtService, PasswordEncoder passwordEncoder) {
-        super(authenticationManager, userRepository, jwtService);
+    /**
+     * Constructor
+     *
+     * @param userRepository
+     * @param jwtService
+     */
+    public LoginScreenController(UserRepository userRepository, JwtService jwtService) {
+        super(userRepository, jwtService);
         this.jwtService = jwtService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -37,13 +36,27 @@ public class LoginScreenController extends AbstractApiController<LoginScreenRequ
      */
     @Override
     protected LoginScreenResponse exec(LoginScreenRequest request) {
+        var loginResponse = new LoginScreenResponse();
         // Find user by username in database
-        var user = userRepository.findByUsername(request.getUserName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        var user = userRepository.findByUsername(request.getUserName());
+        // Check if user is not found
+        if (user.isEmpty()) {
+            loginResponse.setSuccess(false);
+            loginResponse.setMessage(MessageId.E0005);
+            return loginResponse;
+        }
+
+        // Check if password is correct
+        var passwordEncoder = new BCryptPasswordEncoder(10);
+        if (!passwordEncoder.matches(request.getPassword(), user.get().getPasswordHash())) {
+            loginResponse.setSuccess(false);
+            loginResponse.setMessage(MessageId.E0005);
+            return loginResponse;
+        }
 
         // Generate token and refresh token
-        var token = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+        var token = jwtService.generateToken(user.get());
+        var refreshToken = jwtService.generateRefreshToken(user.get());
 
         // Create LoginScreenEntity
         var loginEntity = LoginScreenModel.builder()
@@ -53,17 +66,16 @@ public class LoginScreenController extends AbstractApiController<LoginScreenRequ
                 .build();
 
         // True
-        LoginScreenResponse loginResponse = new LoginScreenResponse();
         loginResponse.setSuccess(true);
-        loginResponse.setMessage(ErrorCode.SUCCESS, "Login successful", detailErrorList);
+        loginResponse.setMessage(MessageId.I0001);
         loginResponse.setResponse(loginEntity);
         return loginResponse;
     }
 
     /**
      * Error check
-     * @param request         the request to check
-     * @param detailErrorList list of detected errors
+     * @param request
+     * @param detailErrorList
      * @return
      */
     @Override
@@ -71,7 +83,7 @@ public class LoginScreenController extends AbstractApiController<LoginScreenRequ
         if (!detailErrorList.isEmpty()) {
             LoginScreenResponse response = new LoginScreenResponse();
             response.setSuccess(false);
-            response.setMessage(ErrorCode.VALIDATION_ERROR, "Validation errors occurred", detailErrorList);
+            response.setMessage(MessageId.E0000);
             return response;
         }
         return null;
