@@ -2,14 +2,18 @@ package project.personal.personalstoremanagementproject.controllers;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import project.personal.personalstoremanagementproject.exceptions.DetailError;
 import project.personal.personalstoremanagementproject.exceptions.ErrorCode;
+import project.personal.personalstoremanagementproject.utils.Messages;
 
 import java.util.List;
 
 @Getter
 @Setter
 public abstract class AbstractApiResponse<T> {
+
     /**
      * Success
      */
@@ -18,7 +22,7 @@ public abstract class AbstractApiResponse<T> {
     /**
      * MessageId
      */
-     ErrorCode messageId;
+     String messageId;
 
     /**
      * Message
@@ -35,16 +39,13 @@ public abstract class AbstractApiResponse<T> {
       */
      T Response ;
 
-     /**
+    /**
       * Set Message
       * @param messageId
-      * @param message
-      * @param detailErrors
       */
-    public void setMessage(ErrorCode messageId, String message, List<DetailError> detailErrors) {
-        this.messageId = messageId;
-        this.message = message;
-        this.detailErrorList = detailErrors;
-    }
+     public void setMessage(String messageId, String... params) {
+         this.messageId = messageId;
+         this.message = Messages.getInstance().getMessages(messageId, params);
+     }
 
 }

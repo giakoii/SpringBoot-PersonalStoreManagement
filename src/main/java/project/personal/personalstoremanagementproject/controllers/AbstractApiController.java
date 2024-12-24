@@ -1,8 +1,6 @@
 package project.personal.personalstoremanagementproject.controllers;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +24,7 @@ public abstract class AbstractApiController<T extends AbstractApiRequest, U exte
     protected final UserRepository userRepository;
     protected List<DetailError> detailErrorList;
 
-    public AbstractApiController(AuthenticationManager authenticationManager, UserRepository userRepository, JwtService jwtService) {
+    public AbstractApiController(UserRepository userRepository, JwtService jwtService) {
         this.userRepository = userRepository;
     }
 
@@ -39,20 +37,26 @@ public abstract class AbstractApiController<T extends AbstractApiRequest, U exte
     @Transactional
     @PostMapping
     public U post(@Valid @RequestBody T request, @RequestHeader(value = "Authorization", required = false) String token) throws Exception {
+        // Perform validation
         List<DetailError> detailErrorList = validate(request);
+
+        // Check if the request is for validation only
+        System.out.println("isOnlyValidation: " + request.isOnlyValidation());
+        if (request.isOnlyValidation) {
+            U validationResponse = validate(request, detailErrorList);
+            return validationResponse;
+            // No errors found, return null as requested
+        }
 
         // Error check
         U errorResponse = validate(request, detailErrorList);
         if (errorResponse != null) {
             return errorResponse;
         }
+
         // Set the API caller ID
-        if (request.getApiCallerId() == null){
+        if (request.getApiCallerId() == null) {
             request.setApiCallerId("system");
-        }
-        // Check if the request is for validation only
-        if (request.isOnlyValidation){
-            return null;
         }
 
         // Main processing

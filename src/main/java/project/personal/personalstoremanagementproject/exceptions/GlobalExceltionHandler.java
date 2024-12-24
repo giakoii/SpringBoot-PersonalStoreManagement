@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import project.personal.personalstoremanagementproject.controllers.ConcreteApiResponse;
+import project.personal.personalstoremanagementproject.utils.MessageId;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ public class GlobalExceltionHandler {
 
         ConcreteApiResponse<?> response = new ConcreteApiResponse<>();
         response.setSuccess(false);
-        response.setMessageId(ErrorCode.FAILED);
+        response.setMessageId(MessageId.E0000);
         response.setMessage("Validation failed");
         response.setDetailErrorList(detailErrors);
         response.setResponse(null);

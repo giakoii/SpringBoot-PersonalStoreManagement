@@ -29,4 +29,7 @@ public abstract class BaseEntity {
 
     @Column(name = "UPDATE_BY")
     String updatedBy;
+
+    @Column(name = "ApiCallerId")
+    String apiCallerId;
 }

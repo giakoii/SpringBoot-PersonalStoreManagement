@@ -1,0 +1,15 @@
+MessageId,Message
+I0000,{0}
+I0001,Operation completed successfully.
+I0002,Data saved successfully.
+I0003,Data updated successfully.
+I0004,Data deleted successfully.
+I0005,Data retrieved successfully.
+I0006,Data not found.
+I0007,Data already exists.
+E0000,{0}
+E0001,Invalid input data: {0}.
+E0002,Data not found for ID: {0}.
+E0003,Data conflict: {0}.
+E0004,Data already exists for ID: {0}.
+E0005,Incorrect username or password.
