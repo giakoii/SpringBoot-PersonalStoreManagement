@@ -16,6 +16,7 @@ import project.personal.personalstoremanagementproject.services.JwtService;
 import project.personal.personalstoremanagementproject.services.UserDetailService;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,6 +28,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
 
     private final UserDetailService userDetailService;
+
+    private final String[] URI = {
+            "/api/v1/register",
+            "/api/v1/login",
+            "/api/v1/forgotPassword",
+            "/ws",
+            "api/v1/verify"
+    };
 
     public JwtAuthFilter(JwtService jwtService, UserDetailService userDetailService) {
         this.jwtService = jwtService;
@@ -49,10 +58,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // Skip JWT validation for public endpoints
         String uri = request.getRequestURI();
-        if (uri.equals("/api/v1/register")
-                || uri.equals("/api/v1/login")
-                || uri.equals("/api/v1/forgotPassword")) {
+        if (Arrays.asList(URI).contains(uri)) {
             filterChain.doFilter(request, response);
+            logger.info("Skipping JWT validation for public endpoint: " + uri);
             return;
         }
 

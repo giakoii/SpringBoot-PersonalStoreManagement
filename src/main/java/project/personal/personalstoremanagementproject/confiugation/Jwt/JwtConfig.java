@@ -34,11 +34,14 @@ public class JwtConfig {
     private final String[] PUBLIC_ENDPOINTS = {
             "/api/v1/login",
             "/api/v1/register",
+            "api/v1/verify",
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/swagger-resources/**",
             "/swagger-ui.html",
-            "/webjars/**"
+            "/ws/**",
+            "/app/**",
+            "/topic/**",
     };
 
     /**
