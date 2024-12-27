@@ -61,8 +61,7 @@ public class UpdateUserProfileController extends AbstractApiController<UpdateUse
         if (request.getAvatarUrl() != null){
             user.setAvatarUrl(request.getAvatarUrl());
         }
-
-        saveChange(user);
+        saveChange(user, request, false);
         userRepository.save(user);
 
         // True
