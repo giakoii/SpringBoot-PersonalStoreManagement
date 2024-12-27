@@ -1,17 +1,20 @@
 package project.personal.personalstoremanagementproject.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import project.personal.personalstoremanagementproject.entities.BaseEntity;
 import project.personal.personalstoremanagementproject.entities.UserAccount;
 import project.personal.personalstoremanagementproject.exceptions.DetailError;
+import project.personal.personalstoremanagementproject.repositories.BaseRepository;
 import project.personal.personalstoremanagementproject.repositories.UserRepository;
 import project.personal.personalstoremanagementproject.services.JwtService;
-
+import org.springframework.security.core.userdetails.User;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,9 +23,7 @@ import java.util.List;
  */
 @RestController
 public abstract class AbstractApiController<T extends AbstractApiRequest, U extends AbstractApiResponse<V>, V> {
-
     protected final UserRepository userRepository;
-    protected List<DetailError> detailErrorList;
 
     public AbstractApiController(UserRepository userRepository, JwtService jwtService) {
         this.userRepository = userRepository;
@@ -41,7 +42,6 @@ public abstract class AbstractApiController<T extends AbstractApiRequest, U exte
         List<DetailError> detailErrorList = validate(request);
 
         // Check if the request is for validation only
-        System.out.println("isOnlyValidation: " + request.isOnlyValidation());
         if (request.isOnlyValidation) {
             U validationResponse = validate(request, detailErrorList);
             return validationResponse;
@@ -63,7 +63,6 @@ public abstract class AbstractApiController<T extends AbstractApiRequest, U exte
         try {
             return exec(request);
         } catch (Exception e) {
-            e.printStackTrace();
             throw e;
         }
     }
@@ -93,9 +92,15 @@ public abstract class AbstractApiController<T extends AbstractApiRequest, U exte
         return List.of();
     }
 
-    protected void saveChange(UserAccount user){
-        user.setUpdatedBy(user.getUsername());
-        user.setUpdatedAt(LocalDateTime.now());
+    protected void saveChange(BaseEntity entity, T request, boolean isCreate) {
+        entity.setApiCallerId(request.apiCallerId);
+        entity.setUpdatedAt(LocalDateTime.now());
+        entity.setUpdatedBy(getCurrentUser().getUsername());
+        if (isCreate) {
+            entity.setCreatedAt(LocalDateTime.now());
+            entity.setCreatedBy(getCurrentUser().getUsername());
+            entity.setIsActive(true);
+        }
     }
 
     /**
@@ -105,11 +110,9 @@ public abstract class AbstractApiController<T extends AbstractApiRequest, U exte
     protected UserAccount getCurrentUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            if (authentication.getPrincipal() instanceof org.springframework.security.core.userdetails.User) {
+            if (authentication.getPrincipal() instanceof User) {
                 // Get information from the principal
-                org.springframework.security.core.userdetails.User springUser =
-                        (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
-
+                User springUser = (User) authentication.getPrincipal();
                 // Find the user in the database
                 return userRepository.findByUsernameAndIsActiveTrue(springUser.getUsername())
                         .orElseThrow(() -> new RuntimeException("User not found"));
