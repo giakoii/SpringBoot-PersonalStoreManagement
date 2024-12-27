@@ -11,4 +11,10 @@ public class ConstantEnum {
         ENABLE,
         DISABLE
     }
+
+    public enum MessageType {
+        CHAT,
+        JOIN,
+        LEAVE
+    }
 }
