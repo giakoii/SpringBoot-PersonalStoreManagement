@@ -1,7 +1,6 @@
 package project.personal.personalstoremanagementproject.entities;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.Nationalized;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,14 +25,12 @@ public class UserAccount extends BaseEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Size(max = 50)
     @Nationalized
     @Column(name = "Username", nullable = false, length = 50)
     private String username;
 
-    @Size(max = 255)
     @Nationalized
-    @Column(name = "Email", nullable = false)
+    @Column(name = "Email", nullable = false, length = 255)
     private String email;
 
     @Nationalized
@@ -41,14 +38,12 @@ public class UserAccount extends BaseEntity implements UserDetails {
     @Column(name = "PasswordHash", nullable = false)
     private String passwordHash;
 
-    @Size(max = 255)
     @Nationalized
-    @Column(name = "FullName", nullable = true)
+    @Column(name = "FullName", nullable = true, length = 255)
     private String fullName;
 
-    @Size(max = 255)
     @Nationalized
-    @Column(name = "NickName", nullable = true)
+    @Column(name = "NickName", nullable = true, length = 255)
     private String nickName;
 
     @Nationalized

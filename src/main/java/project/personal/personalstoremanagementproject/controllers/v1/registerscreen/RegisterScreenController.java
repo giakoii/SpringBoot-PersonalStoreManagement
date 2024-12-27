@@ -1,17 +1,15 @@
 package project.personal.personalstoremanagementproject.controllers.v1.registerscreen;
 
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.personal.personalstoremanagementproject.controllers.AbstractApiController;
 import project.personal.personalstoremanagementproject.entities.UserAccount;
+import project.personal.personalstoremanagementproject.exceptions.DetailError;
+import project.personal.personalstoremanagementproject.repositories.UserRepository;
 import project.personal.personalstoremanagementproject.services.JwtService;
 import project.personal.personalstoremanagementproject.utils.MessageId;
 import project.personal.personalstoremanagementproject.utils.constants.ConstantEnum;
-import project.personal.personalstoremanagementproject.exceptions.ErrorCode;
-import project.personal.personalstoremanagementproject.repositories.UserRepository;
-import project.personal.personalstoremanagementproject.exceptions.DetailError;
 
 import java.util.List;
 
@@ -26,12 +24,11 @@ public class RegisterScreenController extends AbstractApiController<RegisterScre
 
     /**
      * Constructor
-     * @param authenticationManager
      * @param userRepository
      * @param jwtService
      * @param registerScreenSendMailResult
      */
-    public RegisterScreenController(AuthenticationManager authenticationManager, UserRepository userRepository, JwtService jwtService, RegisterScreenSendMailResult registerScreenSendMailResult) {
+    public RegisterScreenController(UserRepository userRepository, JwtService jwtService, RegisterScreenSendMailResult registerScreenSendMailResult) {
         super(userRepository, jwtService);
         this.registerScreenSendMailResult = registerScreenSendMailResult;
     }
@@ -45,7 +42,7 @@ public class RegisterScreenController extends AbstractApiController<RegisterScre
     protected RegisterScreenResponse exec(RegisterScreenRequest request) throws Exception {
         var response = new RegisterScreenResponse();
         // Find user by username and email
-        var user = userRepository.existsByEmailAndUsername(request.getEmail(), request.getUserName());
+        var user = userRepository.existsByEmailOrUsernameAndIsActiveTrue(request.getEmail(), request.getUserName());
         if (user) {
             response.setSuccess(false);
             response.setMessage(MessageId.E0000, "User already exists");

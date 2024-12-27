@@ -17,6 +17,7 @@ import java.io.Serializable;
 public class RegisterScreenRequest extends AbstractApiRequest implements Serializable {
 
     @NotBlank(message = "UserName is required")
+    @Pattern(regexp = "^\\D[a-zA-Z0-9@]*$", message = "UserName must not start with a digit and can only contain letters, digits, and @")
     String userName;
 
     @Size(min = 8, max = 20, message = "Password must be between 8 and 20 characters")
