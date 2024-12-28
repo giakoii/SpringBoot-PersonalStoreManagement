@@ -1,0 +1,236 @@
+use PersonalStoreManagement
+go
+
+create table dbo.address
+(
+    address_id    bigint identity
+        primary key,
+    api_caller_id varchar(255),
+    create_at     datetime2(6),
+    create_by     varchar(255),
+    is_active     bit           not null,
+    update_at     datetime2(6),
+    update_by     varchar(255),
+    address_line  nvarchar(max) not null,
+    city          nvarchar(100) not null,
+    country       nvarchar(100) not null,
+    state         nvarchar(100),
+    user_id       bigint        not null,
+    zip_code      nvarchar(20)
+)
+go
+
+create table dbo.brand
+(
+    brand_id      bigint identity
+        primary key,
+    api_caller_id varchar(255),
+    create_at     datetime2(6),
+    create_by     varchar(255),
+    is_active     bit           not null,
+    update_at     datetime2(6),
+    update_by     varchar(255),
+    description   nvarchar(max),
+    logo_url      nvarchar(max),
+    name          nvarchar(255) not null,
+    status        tinyint default 1
+)
+go
+
+create table dbo.category
+(
+    category_id        bigint identity
+        primary key,
+    api_caller_id      varchar(255),
+    create_at          datetime2(6),
+    create_by          varchar(255),
+    is_active          bit           not null,
+    update_at          datetime2(6),
+    update_by          varchar(255),
+    description        nvarchar(max),
+    image_url          nvarchar(max),
+    name               nvarchar(255) not null,
+    parent_category_id bigint
+)
+go
+
+create table dbo.email_template
+(
+    id            int identity
+        primary key,
+    api_caller_id varchar(255),
+    create_at     datetime2(6),
+    create_by     varchar(255),
+    is_active     bit          not null,
+    update_at     datetime2(6),
+    update_by     varchar(255),
+    body          nvarchar(max),
+    title         nvarchar(max),
+    screen_name   varchar(255) not null
+)
+go
+
+create table dbo.notification
+(
+    notification_id bigint identity
+        primary key,
+    api_caller_id   varchar(255),
+    create_at       datetime2(6),
+    create_by       varchar(255),
+    is_active       bit           not null,
+    update_at       datetime2(6),
+    update_by       varchar(255),
+    is_read         bit default 0,
+    message         nvarchar(max) not null,
+    title           nvarchar(255) not null,
+    user_id         bigint        not null
+)
+go
+
+create table dbo.[order]
+(
+    order_id      bigint identity
+        primary key,
+    api_caller_id varchar(255),
+    create_at     datetime2(6),
+    create_by     varchar(255),
+    is_active     bit            not null,
+    update_at     datetime2(6),
+    update_by     varchar(255),
+    order_status  nvarchar(50)   not null,
+    status        tinyint default 1,
+    total_price   numeric(18, 2) not null,
+    user_id       bigint         not null
+)
+go
+
+create table dbo.order_detail
+(
+    order_detail_id bigint identity
+        primary key,
+    api_caller_id   varchar(255),
+    create_at       datetime2(6),
+    create_by       varchar(255),
+    is_active       bit            not null,
+    update_at       datetime2(6),
+    update_by       varchar(255),
+    order_id        bigint         not null,
+    product_id      bigint         not null,
+    quantity        int            not null,
+    unit_price      numeric(18, 2) not null
+)
+go
+
+create table dbo.payment
+(
+    payment_id     bigint identity
+        primary key,
+    api_caller_id  varchar(255),
+    create_at      datetime2(6),
+    create_by      varchar(255),
+    is_active      bit            not null,
+    update_at      datetime2(6),
+    update_by      varchar(255),
+    amount_paid    numeric(18, 2) not null,
+    order_id       bigint         not null,
+    payment_method nvarchar(50)   not null,
+    payment_status nvarchar(50)   not null
+)
+go
+
+create table dbo.product
+(
+    product_id     bigint identity
+        primary key,
+    api_caller_id  varchar(255),
+    create_at      datetime2(6),
+    create_by      varchar(255),
+    is_active      bit            not null,
+    update_at      datetime2(6),
+    update_by      varchar(255),
+    brand_id       bigint,
+    category_id    bigint,
+    description    nvarchar(max),
+    image_url      nvarchar(max),
+    name           nvarchar(255)  not null,
+    original_price numeric(18, 2),
+    price          numeric(18, 2) not null,
+    skucode        nvarchar(50)   not null,
+    stock_quantity int            not null
+)
+go
+
+create table dbo.review
+(
+    review_id     bigint identity
+        primary key,
+    api_caller_id varchar(255),
+    create_at     datetime2(6),
+    create_by     varchar(255),
+    is_active     bit           not null,
+    update_at     datetime2(6),
+    update_by     varchar(255),
+    content       nvarchar(max),
+    product_id    bigint        not null,
+    rating        tinyint       not null,
+    reviewer_name nvarchar(255) not null
+)
+go
+
+create table dbo.technical_specification
+(
+    spec_id             bigint identity
+        primary key,
+    api_caller_id       varchar(255),
+    create_at           datetime2(6),
+    create_by           varchar(255),
+    is_active           bit           not null,
+    update_at           datetime2(6),
+    update_by           varchar(255),
+    product_id          bigint        not null,
+    specification_key   nvarchar(255) not null,
+    specification_value nvarchar(max) not null
+)
+go
+
+create table dbo.user_account
+(
+    user_id       bigint identity
+        primary key,
+    api_caller_id varchar(255),
+    create_at     datetime2(6),
+    create_by     varchar(255),
+    is_active     bit           not null,
+    update_at     datetime2(6),
+    update_by     varchar(255),
+    address       nvarchar(max),
+    avatar_url    nvarchar(max),
+    date_of_birth date,
+    email         nvarchar(255) not null,
+    full_name     nvarchar(255),
+    gender        tinyint,
+    last_login    datetime2(6),
+    nick_name     nvarchar(255),
+    password_hash nvarchar(max) not null,
+    phone_number  nvarchar(15),
+    role          varchar(50)
+        check ([role] = 'STAFF' OR [role] = 'ADMIN' OR [role] = 'CUSTOMER'),
+    username      nvarchar(50)  not null
+)
+go
+
+create table dbo.wishlist
+(
+    wishlist_id   bigint identity
+        primary key,
+    api_caller_id varchar(255),
+    create_at     datetime2(6),
+    create_by     varchar(255),
+    is_active     bit    not null,
+    update_at     datetime2(6),
+    update_by     varchar(255),
+    product_id    bigint not null,
+    user_id       bigint not null
+)
+go
+

@@ -1,0 +1,26 @@
+version: "4.37.1"
+services:
+  api-spring-storemanagemnt:
+    image: spring-personalstoremanagement:latest
+    ports:
+      - "2003:2003"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlserver://db-storemanagement:1433;encrypt=true;trustServerCertificate=true;databaseName=PersonalStoreManagement
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=Gi@khoi221203
+    depends_on:
+      - db-storemanagement
+    networks:
+      - microservices-network
+  db-storemanagement:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Gi@khoi221203
+    ports:
+      - "1433:1433"
+    networks:
+      - microservices-network
+networks:
+  microservices-network:
+    driver: bridge
