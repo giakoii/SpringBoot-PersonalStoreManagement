@@ -1,19 +1,24 @@
 ## 🛒 Personal Store Management Project
 ## 🌟 Overview
 This project is a personal store management system built using modern Java technologies. It provides APIs for various store operations, including:
-
 - 🔐 User authentication using JWT
 - 🛍️ Product management (CRUD operations)
 - 📦 Order processing and tracking
-## Technologies Used
+- 🚦 Role-based access control (Admin, Staff, Customer)
+---
+
+## 🛠️ Tools and Technologies Used
 - Java
 - Spring Boot
-- Spring security
 - Maven
 - JPA/Hibernate
 - JWT for authentication
-- IntelliJ IDEA 2024.1
-
+- MS SQL Server
+- Docker
+- Swagger
+- Postman
+- Git
+---
 ## Project Structure
 src  
 ├── main  
@@ -48,6 +53,8 @@ src
 </h2>
 <img src="assets/main_architecture_project.png">
 
+---
+
 ## 🌟 Features
 ### 🛠️ Core Features
 1. User Management: Register, login, and manage user profiles.
@@ -64,4 +71,30 @@ Role-based access control (e.g., Admin, Customer).
 🌐 Multi-language support.
 
 ## 🚀 Getting Started
+# 🚀 How to Run
+### 1. Clone the repository or docker pull the image ###
+- Clone Dockerhub: docker pull giakhoi221203/api-db-personalstoremanagement
+- Clone Github: https://github.com/giakoii/SpringBoot-PersonalStoreManagement.git
+### 2. Create database MS SQL database ###
+- Use file database.txt 
+- Create database name: PersonalStoreManagement
+---
+## 📖 API Documentation
+Detailed API documentation is available in the Swagger UI:
+
+Access Swagger: http://localhost:2003/swagger-ui.html
+
+----
+
+## 📖 API request and response sample
+
+### 🛠️ User Registration success and failure
+<div style="display: flex; justify-content: space-between;">
+  <img src="assets/postman_user_success.png" width="45%" />
+  <img src="assets/postman_user_fail.png" width="45%" />
+</div>
+
+
+
+
 
