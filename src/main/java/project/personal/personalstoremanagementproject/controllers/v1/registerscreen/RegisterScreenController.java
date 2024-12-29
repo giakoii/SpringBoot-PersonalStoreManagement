@@ -14,9 +14,9 @@ import project.personal.personalstoremanagementproject.utils.constants.ConstantE
 import java.util.List;
 
 /**
- * @author giakhoi
+ * Controller for register screen
  */
-@RequestMapping("api/v1/register")
+@RequestMapping("api/v1/RegisterScreen")
 @RestController
 public class RegisterScreenController extends AbstractApiController<RegisterScreenRequest, RegisterScreenResponse, String> {
 
@@ -59,6 +59,7 @@ public class RegisterScreenController extends AbstractApiController<RegisterScre
                 .lastLogin(null)
                 .build();
         newUser.setIsActive(false);
+        newUser.setApiCallerId(request.getApiCallerId());
         // Save to database
         userRepository.save(newUser);
         // Send mail to user
