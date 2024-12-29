@@ -1,4 +1,4 @@
-package project.personal.personalstoremanagementproject.controllers.v1.manageuser;
+package project.personal.personalstoremanagementproject.controllers.v1.admin.manageuser;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,7 +9,6 @@ import project.personal.personalstoremanagementproject.repositories.ViewUserRepo
 import project.personal.personalstoremanagementproject.services.JwtService;
 import project.personal.personalstoremanagementproject.utils.MessageId;
 
-import java.time.LocalDate;
 import java.util.List;
 
 /**
