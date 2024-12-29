@@ -32,9 +32,10 @@ public class JwtConfig {
     private  JwtAuthFilter jwtFilter;
 
     private final String[] PUBLIC_ENDPOINTS = {
-            "/api/v1/login",
-            "/api/v1/register",
-            "api/v1/verify",
+            "/api/v1/RegisterScreen",
+            "/api/v1/LoginScreen",
+            "/api/v1/ForgotPasswordScreen",
+            "api/v1/VendorInformation",
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/swagger-resources/**",

@@ -17,4 +17,10 @@ public class ConstantEnum {
         JOIN,
         LEAVE
     }
+
+    public enum Gender {
+        MALE,
+        FEMALE,
+        OTHER
+    }
 }

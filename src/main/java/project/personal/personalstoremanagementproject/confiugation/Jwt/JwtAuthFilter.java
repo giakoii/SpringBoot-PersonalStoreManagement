@@ -30,11 +30,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserDetailService userDetailService;
 
     private final String[] URI = {
-            "/api/v1/register",
-            "/api/v1/login",
-            "/api/v1/forgotPassword",
+            "/api/v1/RegisterScreen",
+            "/api/v1/LoginScreen",
+            "/api/v1/ForgotPasswordScreen",
             "/ws",
-            "api/v1/verify"
+            "api/v1/VendorInformation",
     };
 
     public JwtAuthFilter(JwtService jwtService, UserDetailService userDetailService) {

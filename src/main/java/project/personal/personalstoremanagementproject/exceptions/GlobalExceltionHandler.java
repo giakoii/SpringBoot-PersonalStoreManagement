@@ -10,19 +10,11 @@ import project.personal.personalstoremanagementproject.controllers.ConcreteApiRe
 import project.personal.personalstoremanagementproject.utils.MessageId;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceltionHandler {
-    /**
-     * Handle Illegal Argument Exception
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(value = RuntimeException.class)
-    ResponseEntity<String> handleRuntimeException(RuntimeException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ConcreteApiResponse<?>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -32,14 +24,46 @@ public class GlobalExceltionHandler {
 
         ConcreteApiResponse<?> response = new ConcreteApiResponse<>();
         response.setSuccess(false);
-        response.setMessageId(MessageId.E0000);
-        response.setMessage("Validation failed");
+        response.setMessage(MessageId.E0000, "Validation failed");
         response.setDetailErrorList(detailErrors);
         response.setResponse(null);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ConcreteApiResponse<?>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        String message = ex.getMessage();
+
+        ConcreteApiResponse<?> response = new ConcreteApiResponse<>();
+        response.setSuccess(false);
+        response.setMessage(MessageId.E0000, message);
+        response.setDetailErrorList(null);
+        response.setResponse(null);
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ConcreteApiResponse<?>> handleGeneralExceptions(Exception ex) {
+        String systemMessage = ex.getMessage();
+
+        // Tạo phản hồi
+        ConcreteApiResponse<?> response = new ConcreteApiResponse<>();
+        response.setSuccess(false);
+        response.setMessageId("E0000");
+        response.setMessage("An error occurred");
+        response.setResponse(null);
+
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+    /**
+     * Maps a FieldError to a DetailError
+     * @param error the FieldError to map
+     * @return the mapped DetailError
+     */
     private DetailError mapFieldErrorToDetailError(FieldError error) {
         String errorCode = getErrorCode(error);
         String errorMessage = error.getField() + " " + getErrorMessage(error);
@@ -47,53 +71,39 @@ public class GlobalExceltionHandler {
         return new DetailError(error.getField(), errorCode, errorMessage);
     }
 
+    /**
+     * Gets the error code for a FieldError
+     * @param error the FieldError to get the code for
+     * @return the error code
+     */
     private String getErrorCode(FieldError error) {
-        // Check the error code and return the corresponding error code
-        if (error.getCode().equals("NotBlank")) {
-            return "REQUIRED_FIELD";
-        } else if (error.getCode().equals("Size")) {
-            return "INVALID_SIZE";
-        } else if (error.getCode().equals("Pattern")) {
-            return "INVALID_FORMAT";
-        } else if (error.getCode().equals("Email")) {
-            return "INVALID_EMAIL";
-        } else if (error.getCode().equals("Min")) {
-            return "MINIMUM_VALUE";
-        } else if (error.getCode().equals("Max")) {
-            return "MAXIMUM_VALUE";
-        } else if (error.getCode().equals("NotNull")) {
-            return "NOT_NULL";
-        } else if (error.getCode().equals("Length")) {
-            return "INVALID_LENGTH";
-        } else if (error.getCode().equals("Range")) {
-            return "INVALID_RANGE";
-        }
-        return "UNKNOWN_ERROR";
+        return switch (error.getCode()) {
+            case "NotBlank" -> "REQUIRED_FIELD";
+            case "Size" -> "INVALID_SIZE";
+            case "Pattern" -> "INVALID_FORMAT";
+            case "Email" -> "INVALID_EMAIL";
+            case "Min" -> "MINIMUM_VALUE";
+            case "Max" -> "MAXIMUM_VALUE";
+            case "NotNull" -> "NOT_NULL";
+            default -> "UNKNOWN_ERROR";
+        };
     }
 
+    /**
+     * Gets the error message for a FieldError
+     * @param error the FieldError to get the message for
+     * @return the error message
+     */
     private String getErrorMessage(FieldError error) {
-        // Xác định thông báo lỗi dựa trên loại ràng buộc
-        if (error.getCode().equals("NotBlank")) {
-            return "is required";
-        } else if (error.getCode().equals("Size")) {
-            return "must be within the required size";
-        } else if (error.getCode().equals("Pattern")) {
-            return "is invalid";
-        } else if (error.getCode().equals("Email")) {
-            return "is invalid";
-        } else if (error.getCode().equals("Min")) {
-            return "must be greater than or equal to " + error.getArguments()[1];
-        } else if (error.getCode().equals("Max")) {
-            return "must be less than or equal to " + error.getArguments()[1];
-        } else if (error.getCode().equals("NotNull")) {
-            return "must not be null";
-        } else if (error.getCode().equals("Length")) {
-            return "must be " + error.getArguments()[1] + " characters";
-        } else if (error.getCode().equals("Range")) {
-            return "must be between " + error.getArguments()[1] + " and " + error.getArguments()[2];
-
-        }
-        return "is invalid";
+        return switch (error.getCode()) {
+            case "NotBlank" -> "is required";
+            case "Size" -> "must be between " + error.getArguments()[1] + " and " + error.getArguments()[2] + " characters";
+            case "Pattern" -> "must match the pattern " + error.getArguments()[1];
+            case "Email" -> "must be a valid email address";
+            case "Min" -> "must be greater than or equal to " + error.getArguments()[1];
+            case "Max" -> "must be less than or equal to " + error.getArguments()[1];
+            case "NotNull" -> "must not be null";
+            default -> "an unknown error occurred";
+        };
     }
-
 }

@@ -204,7 +204,6 @@ create table dbo.user_account
     is_active     bit           not null,
     update_at     datetime2(6),
     update_by     varchar(255),
-    address       nvarchar(max),
     avatar_url    nvarchar(max),
     date_of_birth date,
     email         nvarchar(255) not null,

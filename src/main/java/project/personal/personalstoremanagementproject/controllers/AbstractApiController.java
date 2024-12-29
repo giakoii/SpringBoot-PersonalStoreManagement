@@ -1,8 +1,8 @@
 package project.personal.personalstoremanagementproject.controllers;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +14,7 @@ import project.personal.personalstoremanagementproject.exceptions.DetailError;
 import project.personal.personalstoremanagementproject.repositories.BaseRepository;
 import project.personal.personalstoremanagementproject.repositories.UserRepository;
 import project.personal.personalstoremanagementproject.services.JwtService;
-import org.springframework.security.core.userdetails.User;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,7 +40,7 @@ public abstract class AbstractApiController<T extends AbstractApiRequest, U exte
     public U post(@Valid @RequestBody T request, @RequestHeader(value = "Authorization", required = false) String token) throws Exception {
         // Perform validation
         List<DetailError> detailErrorList = validate(request);
-
+        var response = new ConcreteApiResponse<>();
         // Check if the request is for validation only
         if (request.isOnlyValidation) {
             U validationResponse = validate(request, detailErrorList);
@@ -63,7 +63,12 @@ public abstract class AbstractApiController<T extends AbstractApiRequest, U exte
         try {
             return exec(request);
         } catch (Exception e) {
-            throw e;
+            // Log the exception
+            e.printStackTrace();
+            // Return an error response
+            response.setSuccess(false);
+            response.setMessage("E0000", "An error occurred");
+            return null;
         }
     }
 

@@ -2,10 +2,7 @@ package project.personal.personalstoremanagementproject.controllers;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import project.personal.personalstoremanagementproject.exceptions.DetailError;
-import project.personal.personalstoremanagementproject.exceptions.ErrorCode;
 import project.personal.personalstoremanagementproject.utils.Messages;
 
 import java.util.List;

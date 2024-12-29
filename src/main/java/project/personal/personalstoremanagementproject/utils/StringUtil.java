@@ -29,26 +29,6 @@ public class StringUtil {
     }
 
     /**
-     * Generates unique id for entities
-     * @param entity
-     * @param repository
-     * @return
-     * @param <T>
-     */
-    public static <T> String createId(T entity, BaseRepository<T, ?> repository) {
-        // Get current date
-        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
-        // Get count of entities
-        long count = repository.count();
-        // Format count to 3 digits
-        String formattedCount = String.format("%03d", count + 1);
-        // Get first letter of entity class name
-        String prefix = entity.getClass().getSimpleName().substring(0, 1).toUpperCase();
-        // Return generated id
-        return prefix + date + formattedCount;
-    }
-
-    /**
      * Encrypts data using AES algorithm
      * @param userId
      * @param userName
@@ -76,16 +56,16 @@ public class StringUtil {
      * @throws Exception
      */
     public String decrypt(String encryptedData) throws Exception {
-        // Decode encrypted data
-        byte[] decodedData = Base64.getDecoder().decode(encryptedData);
-        // Create SecretKeySpec object from secret key
-        var secretKeySpec = new SecretKeySpec(secretKey, "AES");
-        // Create cipher object
-        var cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
-        // Decrypt data
-        byte[] originalData = cipher.doFinal(decodedData);
-        // Return decrypted data
-        return new String(originalData);
+            // Decode encrypted data
+            byte[] decodedData = Base64.getDecoder().decode(encryptedData);
+            // Create SecretKeySpec object from secret key
+            var secretKeySpec = new SecretKeySpec(secretKey, "AES");
+            // Create cipher object
+            var cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+            // Decrypt data
+            byte[] originalData = cipher.doFinal(decodedData);
+            // Return decrypted data
+            return new String(originalData);
     }
 }
