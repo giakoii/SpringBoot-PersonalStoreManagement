@@ -3,37 +3,22 @@ package project.personal.personalstoremanagementproject.controllers.v1.user.prof
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+
 @Value
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class SelectUserProfileModel{
-    /**
-     * Full name
-     */
-    String fullName;
-
-    /**
-     * Nick name
-     */
-    String nickName;
-
-    /**
-     * Phone number
-     */
-    String phoneNumber;
-
-    /**
-     * Email
-     */
     String email;
-
-    /**
-     * Address
-     */
-    String address;
-
-    /**
-     * Image
-     */
+    String fullName;
+    LocalDate dateOfBirth;
+    String phoneNumber;
     String avatarUrl;
+    String nickName;
+    String gender;
+    String addressLine;
+    String city;
+    String state;
+    String country;
+    String zipCode;
 }
