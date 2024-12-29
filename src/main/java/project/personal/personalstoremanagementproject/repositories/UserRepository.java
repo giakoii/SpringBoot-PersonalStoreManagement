@@ -11,6 +11,6 @@ public interface UserRepository extends BaseRepository<UserAccount, Long> {
     boolean existsByEmailOrUsernameAndIsActiveTrue(String email, String userName);
     Optional<UserAccount> findByUsernameAndIsActiveTrue(String userName);
     Optional<UserAccount> findByUsernameAndIsActiveFalse(String userName);
-    Optional<UserAccount> findByUsername(String userName);
+    Optional<UserAccount> findByUsernameOrEmailOrPhoneNumber(String input);
 
 }
