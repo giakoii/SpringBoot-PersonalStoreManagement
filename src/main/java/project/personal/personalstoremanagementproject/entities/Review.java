@@ -20,14 +20,11 @@ public class Review extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long reviewId;
 
-    @NotNull
     @Column(name = "ProductId", nullable = false)
     Long productId;
 
-    @Size(max = 255)
-    @NotNull
     @Nationalized
-    @Column(name = "ReviewerName", nullable = false)
+    @Column(name = "ReviewerName", nullable = false, length = 255)
     String reviewerName;
 
     @Column(name = "Rating", columnDefinition = "tinyint not null")

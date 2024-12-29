@@ -24,16 +24,12 @@ public class Order extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long orderId;
 
-    @NotNull
     @Column(name = "UserId", nullable = false)
     Long userId;
 
-    @NotNull
     @Column(name = "TotalPrice", nullable = false, precision = 18, scale = 2)
     BigDecimal totalPrice;
 
-    @Size(max = 50)
-    @NotNull
     @Nationalized
     @Column(name = "OrderStatus", nullable = false, length = 50)
     String orderStatus;

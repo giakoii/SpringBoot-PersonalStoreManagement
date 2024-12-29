@@ -27,13 +27,10 @@ public class Notification extends BaseEntity{
     @Column(name = "UserId", nullable = false)
     Long userId;
 
-    @Size(max = 255)
-    @NotNull
     @Nationalized
-    @Column(name = "Title", nullable = false)
+    @Column(name = "Title", nullable = false, length = 255)
     String title;
 
-    @NotNull
     @Nationalized
     @Lob
     @Column(name = "Message", nullable = false)

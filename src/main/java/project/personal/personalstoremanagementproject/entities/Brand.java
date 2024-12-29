@@ -23,10 +23,8 @@ public class Brand extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long brandId;
 
-    @Size(max = 255)
-    @NotNull
     @Nationalized
-    @Column(name = "Name", nullable = false)
+    @Column(name = "Name", nullable = false, length = 255)
     String name;
 
     @Nationalized

@@ -23,10 +23,8 @@ public class Category extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long categoryId;
 
-    @Size(max = 255)
-    @NotNull
     @Nationalized
-    @Column(name = "Name", nullable = false)
+    @Column(name = "Name", nullable = false, length = 255)
     String name;
 
     @Column(name = "ParentCategoryId")

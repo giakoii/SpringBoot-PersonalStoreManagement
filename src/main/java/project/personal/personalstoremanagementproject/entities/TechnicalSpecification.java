@@ -20,17 +20,13 @@ public class TechnicalSpecification extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long specId;
 
-    @NotNull
     @Column(name = "ProductId", nullable = false)
     Long productId;
 
-    @Size(max = 255)
-    @NotNull
     @Nationalized
-    @Column(name = "SpecificationKey", nullable = false)
+    @Column(name = "SpecificationKey", nullable = false, length = 255)
     String specificationKey;
 
-    @NotNull
     @Nationalized
     @Lob
     @Column(name = "SpecificationValue", nullable = false)

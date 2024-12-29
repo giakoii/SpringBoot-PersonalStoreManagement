@@ -17,19 +17,15 @@ public class OrderDetail extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderDetailId;
 
-    @NotNull
     @Column(name = "OrderId", nullable = false)
     private Long orderId;
 
-    @NotNull
     @Column(name = "ProductId", nullable = false)
     private Long productId;
 
-    @NotNull
     @Column(name = "Quantity", nullable = false)
     private Integer quantity;
 
-    @NotNull
     @Column(name = "UnitPrice", nullable = false, precision = 18, scale = 2)
     private BigDecimal unitPrice;
 

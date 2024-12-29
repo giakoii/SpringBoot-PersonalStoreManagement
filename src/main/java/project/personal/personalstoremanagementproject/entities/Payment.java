@@ -24,23 +24,17 @@ public class Payment extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long paymentId;
 
-    @NotNull
     @Column(name = "OrderId", nullable = false)
     Long orderId;
 
-    @Size(max = 50)
-    @NotNull
     @Nationalized
     @Column(name = "PaymentMethod", nullable = false, length = 50)
     String paymentMethod;
 
-    @Size(max = 50)
-    @NotNull
     @Nationalized
     @Column(name = "PaymentStatus", nullable = false, length = 50)
     String paymentStatus;
 
-    @NotNull
     @Column(name = "AmountPaid", nullable = false, precision = 18, scale = 2)
     BigDecimal amountPaid;
 }

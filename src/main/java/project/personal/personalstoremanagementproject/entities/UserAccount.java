@@ -52,19 +52,15 @@ public class UserAccount extends BaseEntity implements UserDetails {
 
     @Nationalized
     @Lob
-    @Column(name = "Address")
-    private String address;
-
-    @Nationalized
-    @Lob
     @Column(name = "AvatarUrl")
     private String avatarUrl;
 
     @Column(name = "DateOfBirth")
     private LocalDate dateOfBirth;
 
-    @Column(name = "Gender", columnDefinition = "tinyint")
-    private Short gender;
+    @Column(name = "Gender", length = 50)
+    @Enumerated(EnumType.STRING)
+    private ConstantEnum.Gender gender;
 
     @Column(name = "Role", length = 50)
     @Enumerated(EnumType.STRING)

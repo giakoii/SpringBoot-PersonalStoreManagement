@@ -22,14 +22,10 @@ public class Product extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long productId;
 
-    @Size(max = 255)
-    @NotNull
     @Nationalized
-    @Column(name = "Name", nullable = false)
+    @Column(name = "Name", nullable = false, length = 255)
     String name;
 
-    @Size(max = 50)
-    @NotNull
     @Nationalized
     @Column(name = "SKUCode", nullable = false, length = 50)
     String sKUCode;
@@ -39,7 +35,6 @@ public class Product extends BaseEntity{
     @Column(name = "Description")
     String description;
 
-    @NotNull
     @Column(name = "Price", nullable = false, precision = 18, scale = 2)
     BigDecimal price;
 
