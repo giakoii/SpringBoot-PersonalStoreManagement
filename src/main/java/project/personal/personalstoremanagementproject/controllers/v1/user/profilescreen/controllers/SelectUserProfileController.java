@@ -8,17 +8,31 @@ import project.personal.personalstoremanagementproject.controllers.v1.user.profi
 import project.personal.personalstoremanagementproject.exceptions.DetailError;
 import project.personal.personalstoremanagementproject.controllers.v1.user.profilescreen.models.SelectUserProfileModel;
 import project.personal.personalstoremanagementproject.repositories.UserRepository;
+import project.personal.personalstoremanagementproject.repositories.ViewUserInformationRepository;
 import project.personal.personalstoremanagementproject.services.JwtService;
 import project.personal.personalstoremanagementproject.utils.MessageId;
 
+import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Controller for selecting user profile
+ */
 @RestController
-@RequestMapping("/api/v1/user/select-profile")
+@RequestMapping("/api/v1/SelectUserProfile")
 public class SelectUserProfileController extends AbstractApiController<SelectUserProfileRequest, SelectUserProfileResponse, SelectUserProfileModel> {
 
-    public SelectUserProfileController(AuthenticationManager authenticationManager, UserRepository userRepository, JwtService jwtService) {
+    private final ViewUserInformationRepository viewUserInformationRepository;
+
+    /**
+     * Constructor
+     * @param userRepository
+     * @param jwtService
+     * @param viewUserInformationRepository
+     */
+    public SelectUserProfileController(UserRepository userRepository, JwtService jwtService, ViewUserInformationRepository viewUserInformationRepository) {
         super(userRepository, jwtService);
+        this.viewUserInformationRepository = viewUserInformationRepository;
     }
 
     /**
@@ -30,26 +44,27 @@ public class SelectUserProfileController extends AbstractApiController<SelectUse
     protected SelectUserProfileResponse exec(SelectUserProfileRequest request) throws Exception {
         var response = new SelectUserProfileResponse();
 
-        var user = getCurrentUser();
-        // Check if user is not authenticated
-        if (user == null) {
-            response.setSuccess(false);
-            response.setMessage(MessageId.E0000, "User not authenticated", null);
-            return response;
-        }
+        var userInfor = viewUserInformationRepository.findById(getCurrentUser().getUserId());
+
         // Create model
         var model = SelectUserProfileModel.builder()
-                .fullName(user.getFullName())
-                .phoneNumber(user.getPhoneNumber())
-                .address(user.getAddress())
-                .avatarUrl(user.getAvatarUrl())
-                .email(user.getEmail())
-                .nickName(user.getNickName())
+                .email(userInfor.get().getEmail())
+                .fullName(userInfor.get().getFullName())
+                .dateOfBirth(userInfor.get().getDateOfBirth())
+                .phoneNumber(userInfor.get().getPhoneNumber())
+                .avatarUrl(userInfor.get().getAvatarUrl())
+                .nickName(userInfor.get().getNickName())
+                .gender(userInfor.get().getGender())
+                .addressLine(userInfor.get().getAddressLine())
+                .city(userInfor.get().getCity())
+                .state(userInfor.get().getState())
+                .country(userInfor.get().getCountry())
+                .zipCode(userInfor.get().getZipCode())
                 .build();
 
         // True
         response.setSuccess(true);
-        response.setMessage(MessageId.I0001, "Select user information successful");
+        response.setMessage(MessageId.I0001);
         response.setResponse(model);
         return response;
     }
