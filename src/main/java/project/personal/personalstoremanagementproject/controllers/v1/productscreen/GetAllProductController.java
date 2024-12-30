@@ -1,16 +1,14 @@
-package project.personal.personalstoremanagementproject.controllers.v1.productlistscreen;
+package project.personal.personalstoremanagementproject.controllers.v1.productscreen;
 
-import jakarta.persistence.Column;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.personal.personalstoremanagementproject.controllers.AbstractApiController;
 import project.personal.personalstoremanagementproject.exceptions.DetailError;
 import project.personal.personalstoremanagementproject.repositories.UserRepository;
-import project.personal.personalstoremanagementproject.repositories.ViewProductRepository;
+import project.personal.personalstoremanagementproject.repositories.ViewProductInfRepository;
 import project.personal.personalstoremanagementproject.services.JwtService;
 import project.personal.personalstoremanagementproject.utils.MessageId;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -20,7 +18,7 @@ import java.util.List;
 @RestController
 public class GetAllProductController extends AbstractApiController<GetAllProductRequest, GetAllProductResponse, List<GetAllProductModel>> {
 
-    private final ViewProductRepository viewProductRepository;
+    private final ViewProductInfRepository viewProductRepository;
 
     /**
      * Constructor
@@ -28,7 +26,7 @@ public class GetAllProductController extends AbstractApiController<GetAllProduct
      * @param jwtService
      * @param viewProductRepository
      */
-    public GetAllProductController(UserRepository userRepository, JwtService jwtService, ViewProductRepository viewProductRepository) {
+    public GetAllProductController(UserRepository userRepository, JwtService jwtService, ViewProductInfRepository viewProductRepository) {
         super(userRepository, jwtService);
         this.viewProductRepository = viewProductRepository;
     }
@@ -52,7 +50,7 @@ public class GetAllProductController extends AbstractApiController<GetAllProduct
                             .brandName(product.getBrandName())
                             .categoryName(product.getCategoryName())
                             .price(product.getPrice())
-                            .imageUrl(product.getImageUrl())
+                            .imageUrl(product.getProductImageUrl())
                             .build();
         }).toList();
 

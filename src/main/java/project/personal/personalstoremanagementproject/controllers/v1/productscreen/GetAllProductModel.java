@@ -1,6 +1,5 @@
-package project.personal.personalstoremanagementproject.controllers.v1.productlistscreen;
+package project.personal.personalstoremanagementproject.controllers.v1.productscreen;
 
-import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Getter;
 
