@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Nationalized;
+import project.personal.personalstoremanagementproject.utils.constants.ConstantEnum;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -35,6 +36,7 @@ public class Order extends BaseEntity{
     String orderStatus;
 
     @ColumnDefault("1")
-    @Column(name = "Status", columnDefinition = "tinyint")
-    Short status;
+    @Column(name = "Status", nullable = false, length = 50)
+    @Enumerated(EnumType.STRING)
+    ConstantEnum.Status status;
 }
