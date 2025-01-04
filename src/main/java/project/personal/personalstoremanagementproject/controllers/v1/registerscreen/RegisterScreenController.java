@@ -58,7 +58,6 @@ public class RegisterScreenController extends AbstractApiController<RegisterScre
                 .role(ConstantEnum.Role.CUSTOMER)
                 .lastLogin(null)
                 .build();
-        newUser.setIsActive(false);
         newUser.setApiCallerId(request.getApiCallerId());
         // Save to database
         userRepository.save(newUser);

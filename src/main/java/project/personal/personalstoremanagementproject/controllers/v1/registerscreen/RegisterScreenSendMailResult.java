@@ -42,7 +42,7 @@ public class RegisterScreenSendMailResult {
         // Find email template by screen name
 
         var emailTemplate = emailTemplateRepository.findByScreenName(screenName);
-        var verificationLink = url + "/verify?token=" + stringUtil.encrypt(user.getUserId(), userName);
+        var verificationLink = url + "verify?key=" + stringUtil.encrypt(user.getUserId(), userName);
 
         // If email template is present
         if (emailTemplate.isPresent()) {
