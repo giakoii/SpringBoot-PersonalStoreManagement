@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import project.personal.personalstoremanagementproject.entities.BaseEntity;
 import project.personal.personalstoremanagementproject.entities.UserAccount;
 import project.personal.personalstoremanagementproject.exceptions.DetailError;
-import project.personal.personalstoremanagementproject.repositories.BaseRepository;
 import project.personal.personalstoremanagementproject.repositories.UserRepository;
 import project.personal.personalstoremanagementproject.services.JwtService;
+import project.personal.personalstoremanagementproject.utils.MessageId;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author giakhoi
@@ -67,7 +68,7 @@ public abstract class AbstractApiController<T extends AbstractApiRequest, U exte
             e.printStackTrace();
             // Return an error response
             response.setSuccess(false);
-            response.setMessage("E0000", "An error occurred");
+            response.setMessage(MessageId.E0000, "An error occurred");
             return null;
         }
     }
@@ -110,18 +111,26 @@ public abstract class AbstractApiController<T extends AbstractApiRequest, U exte
 
     /**
      * Get the current authenticated user
+     *
      * @return the current authenticated user
      */
     protected UserAccount getCurrentUser() {
+        var response = new ConcreteApiResponse<>();
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            if (authentication.getPrincipal() instanceof User) {
-                // Get information from the principal
-                User springUser = (User) authentication.getPrincipal();
-                // Find the user in the database
-                return userRepository.findByUsernameAndIsActiveTrue(springUser.getUsername())
-                        .orElseThrow(() -> new RuntimeException("User not found"));
+        try{
+            if (authentication != null && authentication.isAuthenticated()) {
+                if (authentication.getPrincipal() instanceof User) {
+                    // Get information from the principal
+                    User springUser = (User) authentication.getPrincipal();
+                    // Find the user in the database
+                    return userRepository.findByUsernameAndIsActiveTrue(springUser.getUsername());
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setMessage(MessageId.E0000, "Authentication failed");
+            return null;
         }
         return null;
     }

@@ -27,8 +27,7 @@ public class UserDetailService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user = userRepository.findByUsernameAndIsActiveTrue(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        var user = userRepository.findByUsernameAndIsActiveTrue(username);
 
         var authority = new  SimpleGrantedAuthority("ROLE_" + user.getRole().name());
 

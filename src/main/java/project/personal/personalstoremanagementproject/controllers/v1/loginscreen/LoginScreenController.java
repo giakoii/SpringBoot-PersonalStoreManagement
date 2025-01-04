@@ -11,7 +11,10 @@ import project.personal.personalstoremanagementproject.utils.MessageId;
 
 import java.util.List;
 
-@RequestMapping("/api/v1/login")
+/**
+ * Controller for login screen
+ */
+@RequestMapping("/api/v1/LoginScreen")
 @RestController
 public class LoginScreenController extends AbstractApiController<LoginScreenRequest, LoginScreenResponse, LoginScreenModel> {
 
@@ -38,9 +41,9 @@ public class LoginScreenController extends AbstractApiController<LoginScreenRequ
     protected LoginScreenResponse exec(LoginScreenRequest request) {
         var loginResponse = new LoginScreenResponse();
         // Find user by username in database
-        var user = userRepository.findByUsername(request.getUserName());
+        var user = userRepository.findByUsernameAndIsActiveTrue(request.getUserName());
         // Check if user is not found
-        if (user.isEmpty()) {
+        if (user == null) {
             loginResponse.setSuccess(false);
             loginResponse.setMessage(MessageId.E0005);
             return loginResponse;
@@ -48,15 +51,15 @@ public class LoginScreenController extends AbstractApiController<LoginScreenRequ
 
         // Check if password is correct
         var passwordEncoder = new BCryptPasswordEncoder(10);
-        if (!passwordEncoder.matches(request.getPassword(), user.get().getPasswordHash())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             loginResponse.setSuccess(false);
             loginResponse.setMessage(MessageId.E0005);
             return loginResponse;
         }
 
         // Generate token and refresh token
-        var token = jwtService.generateToken(user.get());
-        var refreshToken = jwtService.generateRefreshToken(user.get());
+        var token = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
 
         // Create LoginScreenEntity
         var loginEntity = LoginScreenModel.builder()
