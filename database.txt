@@ -234,3 +234,10 @@ create table dbo.wishlist
 )
 go
 
+INSERT INTO email_template (title, body, screen_name, is_active)
+VALUES
+(N'Xác minh tài khoản của bạn',
+ N'Xin chào ${username},\n\nVui lòng xác minh tài khoản của bạn bằng cách nhấp vào liên kết dưới đây.\n\n${verificationLink} \n\nCảm ơn bạn đã đăng ký tại chúng tôi.',
+ 'RegisterScreen',
+ 1);
+
