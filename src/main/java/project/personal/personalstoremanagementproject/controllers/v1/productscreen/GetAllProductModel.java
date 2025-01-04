@@ -16,7 +16,7 @@ public class GetAllProductModel {
 
     String categoryName;
 
-    BigDecimal price;
+    String price;
 
     String imageUrl;
 }

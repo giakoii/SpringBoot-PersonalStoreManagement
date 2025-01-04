@@ -7,6 +7,7 @@ import project.personal.personalstoremanagementproject.exceptions.DetailError;
 import project.personal.personalstoremanagementproject.repositories.UserRepository;
 import project.personal.personalstoremanagementproject.repositories.ViewProductInfRepository;
 import project.personal.personalstoremanagementproject.services.JwtService;
+import project.personal.personalstoremanagementproject.utils.FormatUtil;
 import project.personal.personalstoremanagementproject.utils.MessageId;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class FilterProductController extends AbstractApiController<FilterProduct
                         .productName(p.getProductName())
                         .brandName(p.getBrandName())
                         .categoryName(p.getCategoryName())
-                        .price(p.getPrice())
+                        .price(FormatUtil.moneyFormat(p.getPrice()))
                         .imageUrl(p.getProductImageUrl())
                         .build())
                 .toList();

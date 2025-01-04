@@ -7,6 +7,7 @@ import project.personal.personalstoremanagementproject.exceptions.DetailError;
 import project.personal.personalstoremanagementproject.repositories.UserRepository;
 import project.personal.personalstoremanagementproject.repositories.ViewProductInfRepository;
 import project.personal.personalstoremanagementproject.services.JwtService;
+import project.personal.personalstoremanagementproject.utils.FormatUtil;
 import project.personal.personalstoremanagementproject.utils.MessageId;
 
 import java.util.List;
@@ -49,7 +50,7 @@ public class GetAllProductController extends AbstractApiController<GetAllProduct
                             .productName(product.getProductName())
                             .brandName(product.getBrandName())
                             .categoryName(product.getCategoryName())
-                            .price(product.getPrice())
+                            .price(FormatUtil.moneyFormat(product.getPrice()))
                             .imageUrl(product.getProductImageUrl())
                             .build();
         }).toList();
