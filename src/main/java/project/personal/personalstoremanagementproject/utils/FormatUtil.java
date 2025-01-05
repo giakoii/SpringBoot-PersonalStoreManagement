@@ -1,5 +1,7 @@
 package project.personal.personalstoremanagementproject.utils;
 
+import java.math.BigDecimal;
+
 /**
  * Utility class for formatting
  */
@@ -40,4 +42,14 @@ public class FormatUtil {
     public static String moneyFormat(float money) {
         return String.format("%,.2f VND", money);
     }
+
+    /**
+     * Format money to VND
+     * @param money the money to format
+     * @return the formatted money
+     */
+    public static String moneyFormat(BigDecimal money) {
+        return String.format("%,.2f VND", money);
+    }
+
 }
