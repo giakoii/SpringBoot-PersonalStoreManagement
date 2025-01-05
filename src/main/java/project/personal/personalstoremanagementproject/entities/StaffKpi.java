@@ -19,7 +19,7 @@ public class StaffKpi {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "staff_kpi_id", nullable = false)
-    Long id;
+    Long staffKpiId;
 
     @Column(name = "staff_id", nullable = false)
     Long staffId;

@@ -23,7 +23,7 @@ public class Staff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "staff_id", nullable = false)
-    Long id;
+    Long staffId;
 
     @JoinColumn(name = "user_id", nullable = false)
     Long userId;

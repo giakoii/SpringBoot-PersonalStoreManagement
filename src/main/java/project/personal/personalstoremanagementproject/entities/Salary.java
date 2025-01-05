@@ -20,7 +20,7 @@ public class Salary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "salary_id", nullable = false)
-    Long id;
+    Long salaryId;
 
     @Column(name = "base_salary", nullable = false, precision = 18, scale = 2)
     BigDecimal baseSalary;
