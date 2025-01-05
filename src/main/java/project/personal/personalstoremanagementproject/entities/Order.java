@@ -1,8 +1,6 @@
 package project.personal.personalstoremanagementproject.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +10,6 @@ import org.hibernate.annotations.Nationalized;
 import project.personal.personalstoremanagementproject.utils.constants.ConstantEnum;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 
 @Getter
 @Setter
@@ -38,5 +35,5 @@ public class Order extends BaseEntity{
     @ColumnDefault("1")
     @Column(name = "Status", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
-    ConstantEnum.Status status;
+    ConstantEnum.OrderStatus status;
 }

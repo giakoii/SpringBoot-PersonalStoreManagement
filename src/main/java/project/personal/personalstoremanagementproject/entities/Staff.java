@@ -32,6 +32,9 @@ public class Staff {
     @Column(name = "full_name", nullable = false)
     String fullName;
 
+    @Column(name = "date_of_birth")
+    LocalDate dateOfBirth;
+
     @Nationalized
     @Column(name = "department", length = 255)
     String department;
