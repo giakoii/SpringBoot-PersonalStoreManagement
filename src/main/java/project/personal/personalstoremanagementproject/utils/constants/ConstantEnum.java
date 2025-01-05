@@ -7,9 +7,13 @@ public class ConstantEnum {
         STAFF
     }
 
-    public enum Status {
-        ENABLE,
-        DISABLE
+    public enum OrderStatus {
+        PAYMENT_PENDING,
+        PAYMENT_COMPLETED,
+        PACKAGING,
+        SHIPPED,
+        DELIVERED,
+        CANCELLED
     }
 
     public enum MessageType {
@@ -22,5 +26,12 @@ public class ConstantEnum {
         MALE,
         FEMALE,
         OTHER
+    }
+
+    public enum MembershipLevel{
+        NORMAL,
+        SILVER,
+        GOLD,
+        PLATINUM
     }
 }
