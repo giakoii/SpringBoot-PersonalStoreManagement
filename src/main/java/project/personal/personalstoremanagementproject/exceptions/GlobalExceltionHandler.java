@@ -10,12 +10,16 @@ import project.personal.personalstoremanagementproject.controllers.ConcreteApiRe
 import project.personal.personalstoremanagementproject.utils.MessageId;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceltionHandler {
 
+    /**
+     * Handles MethodArgumentNotValidExceptions
+     * @param ex the exception to handle
+     * @return the response entity
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ConcreteApiResponse<?>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         List<DetailError> detailErrors = ex.getBindingResult().getFieldErrors().stream()
@@ -31,6 +35,11 @@ public class GlobalExceltionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles IllegalArgumentExceptions
+     * @param ex the exception to handle
+     * @return the response entity
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ConcreteApiResponse<?>> handleIllegalArgumentException(IllegalArgumentException ex) {
         String message = ex.getMessage();
@@ -43,21 +52,6 @@ public class GlobalExceltionHandler {
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ConcreteApiResponse<?>> handleGeneralExceptions(Exception ex) {
-        String systemMessage = ex.getMessage();
-
-        // Tạo phản hồi
-        ConcreteApiResponse<?> response = new ConcreteApiResponse<>();
-        response.setSuccess(false);
-        response.setMessageId("E0000");
-        response.setMessage("An error occurred");
-        response.setResponse(null);
-
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
 
     /**
      * Maps a FieldError to a DetailError
