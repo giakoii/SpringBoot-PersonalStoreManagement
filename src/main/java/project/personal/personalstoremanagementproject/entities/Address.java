@@ -3,9 +3,7 @@ package project.personal.personalstoremanagementproject.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Nationalized;
@@ -15,8 +13,11 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 @Table(name = "Address")
+@AllArgsConstructor
 public class Address extends BaseEntity{
     @Id
     @Column(name = "AddressId", nullable = false)

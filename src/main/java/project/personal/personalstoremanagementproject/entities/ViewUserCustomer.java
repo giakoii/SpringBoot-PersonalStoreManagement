@@ -13,10 +13,10 @@ import java.time.LocalDate;
 
 @Entity
 @Immutable
-@Table(name = "user_information_view")
+@Table(name = "user_customer_view")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
-public class ViewUserInformation {
+public class ViewUserCustomer {
 
     @Id
     @Column(name = "user_id")

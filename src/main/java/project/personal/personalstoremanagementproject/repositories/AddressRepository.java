@@ -5,5 +5,4 @@ import java.util.Optional;
 
 @Repository
 public interface AddressRepository extends BaseRepository<Address, Long> {
-    Optional<Address> findByUserId(Long userId);
 }

@@ -37,10 +37,6 @@ public class Customer {
     LocalDate dateOfBirth;
 
     @Nationalized
-    @Column(name = "address", length = 500)
-    String address;
-
-    @Nationalized
     @Column(name = "phone_number", length = 20)
     String phoneNumber;
 
