@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Verifying information user
  */
-@RequestMapping("api/v1/verify")
+@RequestMapping("api/v1/VerifyInformation")
 @RestController
 public class VerifyInformationController extends AbstractApiController<VerifyInformationRequest, VerifyInformationResponse, String> {
 
@@ -51,12 +51,15 @@ public class VerifyInformationController extends AbstractApiController<VerifyInf
             response.setMessage(MessageId.E0000, "Key is invalid");
             return response;
         }
-        // Check created time of user
-        if (user.get().getCreatedAt().isAfter(LocalDateTime.now().minusDays(1))) {
-            response.setSuccess(false);
-            response.setMessage(MessageId.E0000, "Key is invalid");
-            return response;
+        // Check user first created
+        if (user.get().getLastLogin() == null){
+            if (user.get().getCreatedAt().isBefore(LocalDateTime.now().minusDays(1))) {
+                response.setSuccess(false);
+                response.setMessage(MessageId.E0000, "Key is invalid");
+                return response;
+            }
         }
+
 
         // Set active for user
         user.get().setIsActive(true);
