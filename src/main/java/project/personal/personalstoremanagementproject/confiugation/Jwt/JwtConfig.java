@@ -35,7 +35,7 @@ public class JwtConfig {
             "/api/v1/RegisterScreen",
             "/api/v1/LoginScreen",
             "/api/v1/ForgotPasswordScreen",
-            "api/v1/VendorInformation",
+            "api/v1/VerifyInformation",
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/swagger-resources/**",

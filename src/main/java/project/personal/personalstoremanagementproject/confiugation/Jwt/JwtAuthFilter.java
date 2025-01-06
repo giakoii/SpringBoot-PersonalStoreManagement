@@ -34,7 +34,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/api/v1/LoginScreen",
             "/api/v1/ForgotPasswordScreen",
             "/ws",
-            "api/v1/VendorInformation",
+            "api/v1/VerifyInformation",
     };
 
     public JwtAuthFilter(JwtService jwtService, UserDetailService userDetailService) {
