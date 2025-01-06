@@ -35,42 +35,25 @@ public abstract class AbstractApiController<T extends AbstractApiRequest, U exte
      * @param token the JWT token
      * @return ResponseEntity containing the response
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @PostMapping
-    public U post(@Valid @RequestBody T request) throws Exception {
+    public U post(@Valid @RequestBody T request, U response) throws Exception {
         // Perform validation
+        U validationResponse = null;
         List<DetailError> detailErrorList = new ArrayList<>();
-
-        U validationResponse = validate(request, detailErrorList);
-        // Check if the request is for validation only
-        if (request.isOnlyValidation) {
-
-            return validationResponse;
-            // No errors found, return null as requested
-        }
-
-        // Error check
-        if (validationResponse != null) {
-            return validationResponse;
-        }
-
-        // Set the API caller ID
-        if (request.getApiCallerId() == null) {
-            request.setApiCallerId("system");
-        }
-
-        // Main processing
         try {
-            return exec(request);
+            validationResponse = validate(request, detailErrorList);
+            if (validationResponse.isSuccess() && !request.isOnlyValidation()){
+                return exec(request);
+            }
         } catch (Exception e) {
-            // Log the exception
             e.printStackTrace();
-            // Return an error response
             validationResponse.setSuccess(false);
             validationResponse.setMessage(MessageId.E0000, "An error occurred");
             validationResponse.setDetailErrorList(detailErrorList);
             return validationResponse;
         }
+        return validationResponse;
     }
 
     /**
