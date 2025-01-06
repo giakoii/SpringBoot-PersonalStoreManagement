@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import project.personal.personalstoremanagementproject.entities.BaseEntity;
 import project.personal.personalstoremanagementproject.entities.UserAccount;
@@ -16,8 +15,8 @@ import project.personal.personalstoremanagementproject.services.JwtService;
 import project.personal.personalstoremanagementproject.utils.MessageId;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author giakhoi
@@ -26,7 +25,7 @@ import java.util.Optional;
 public abstract class AbstractApiController<T extends AbstractApiRequest, U extends AbstractApiResponse<V>, V> {
     protected final UserRepository userRepository;
 
-    public AbstractApiController(UserRepository userRepository, JwtService jwtService) {
+    protected AbstractApiController(UserRepository userRepository, JwtService jwtService) {
         this.userRepository = userRepository;
     }
 
@@ -38,21 +37,21 @@ public abstract class AbstractApiController<T extends AbstractApiRequest, U exte
      */
     @Transactional
     @PostMapping
-    public U post(@Valid @RequestBody T request, @RequestHeader(value = "Authorization", required = false) String token) throws Exception {
+    public U post(@Valid @RequestBody T request) throws Exception {
         // Perform validation
-        List<DetailError> detailErrorList = validate(request);
-        var response = new ConcreteApiResponse<>();
+        List<DetailError> detailErrorList = new ArrayList<>();
+
+        U validationResponse = validate(request, detailErrorList);
         // Check if the request is for validation only
         if (request.isOnlyValidation) {
-            U validationResponse = validate(request, detailErrorList);
+
             return validationResponse;
             // No errors found, return null as requested
         }
 
         // Error check
-        U errorResponse = validate(request, detailErrorList);
-        if (errorResponse != null) {
-            return errorResponse;
+        if (validationResponse != null) {
+            return validationResponse;
         }
 
         // Set the API caller ID
@@ -67,9 +66,10 @@ public abstract class AbstractApiController<T extends AbstractApiRequest, U exte
             // Log the exception
             e.printStackTrace();
             // Return an error response
-            response.setSuccess(false);
-            response.setMessage(MessageId.E0000, "An error occurred");
-            return null;
+            validationResponse.setSuccess(false);
+            validationResponse.setMessage(MessageId.E0000, "An error occurred");
+            validationResponse.setDetailErrorList(detailErrorList);
+            return validationResponse;
         }
     }
 
@@ -87,16 +87,6 @@ public abstract class AbstractApiController<T extends AbstractApiRequest, U exte
      * @return ResponseEntity with error response or null if no errors found
      */
     protected abstract U validate(T request, List<DetailError> detailErrorList);
-
-    /**
-     * Validation method for request
-     * @param request the request to validate
-     * @return List of detected errors
-     */
-    private List<DetailError> validate(T request) {
-        // Implement validation logic here and return a list of errors
-        return List.of();
-    }
 
     protected void saveChange(BaseEntity entity, T request, boolean isCreate) {
         entity.setApiCallerId(request.apiCallerId);
