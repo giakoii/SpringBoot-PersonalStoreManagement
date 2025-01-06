@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import project.personal.personalstoremanagementproject.controllers.AbstractApiRequest;
-import project.personal.personalstoremanagementproject.entities.UserAccount;
 import project.personal.personalstoremanagementproject.utils.constants.ConstantEnum;
 
 import java.io.Serializable;

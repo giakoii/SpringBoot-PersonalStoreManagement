@@ -6,9 +6,11 @@ import project.personal.personalstoremanagementproject.controllers.AbstractApiCo
 import project.personal.personalstoremanagementproject.controllers.v1.user.profilescreen.request.UpdateUserProfileRequest;
 import project.personal.personalstoremanagementproject.controllers.v1.user.profilescreen.responses.UpdateUserProfileResponse;
 import project.personal.personalstoremanagementproject.entities.Address;
+import project.personal.personalstoremanagementproject.entities.Customer;
 import project.personal.personalstoremanagementproject.entities.UserAccount;
 import project.personal.personalstoremanagementproject.exceptions.DetailError;
 import project.personal.personalstoremanagementproject.repositories.AddressRepository;
+import project.personal.personalstoremanagementproject.repositories.CustomerRepository;
 import project.personal.personalstoremanagementproject.repositories.UserRepository;
 import project.personal.personalstoremanagementproject.services.JwtService;
 import project.personal.personalstoremanagementproject.utils.MessageId;
@@ -23,6 +25,8 @@ import java.util.List;
 public class UpdateUserProfileController extends AbstractApiController<UpdateUserProfileRequest, UpdateUserProfileResponse, String> {
 
     private final AddressRepository addressRepository;
+
+    private final CustomerRepository customerRepository;
     
     /**
      * Constructor
@@ -30,9 +34,10 @@ public class UpdateUserProfileController extends AbstractApiController<UpdateUse
      * @param jwtService
      * @param addressRepository
      */
-    public UpdateUserProfileController(UserRepository userRepository, JwtService jwtService, AddressRepository addressRepository) {
+    public UpdateUserProfileController(UserRepository userRepository, JwtService jwtService, AddressRepository addressRepository, CustomerRepository customerRepository) {
         super(userRepository, jwtService);
         this.addressRepository = addressRepository;
+        this.customerRepository = customerRepository;
     }
 
     /**
@@ -43,27 +48,17 @@ public class UpdateUserProfileController extends AbstractApiController<UpdateUse
     @Override
     protected UpdateUserProfileResponse exec(UpdateUserProfileRequest request) {
         var response = new UpdateUserProfileResponse();
-
+        // Get current user
         var user = getCurrentUser();
+        // Get customer information
+        var customerInformation = customerRepository.findById(user.getUserId()).orElse(null);
+        // Get address information
+        var addressUser = addressRepository.findById(user.getUserId()).orElse(null);
         // Update user information
-        updateUserInformation(request, user);
+        updateCustomerInformation(request, user, customerInformation);
         saveChange(user, request, false);
-        userRepository.save(user);
-
         // Update address information
-        var addressUser = addressRepository.findByUserId(user.getUserId());
-        if (addressUser.isEmpty()) {
-            // Create new address
-            Address address = new Address();
-            updateAddressUser(request, address, user.getUserId());
-            saveChange(address, request, true);
-            addressRepository.save(address);
-        } else {
-            // Update address
-            updateAddressUser(request, addressUser.get(), user.getUserId());
-            saveChange(addressUser.get(), request, true);
-            addressRepository.save(addressUser.get());
-        }
+        updateAddressUser(request, user, addressUser);
 
         // True
         response.setSuccess(true);
@@ -79,10 +74,11 @@ public class UpdateUserProfileController extends AbstractApiController<UpdateUse
      */
     @Override
     protected UpdateUserProfileResponse validate(UpdateUserProfileRequest request, List<DetailError> detailErrorList) {
+        var response = new UpdateUserProfileResponse();
         if (!detailErrorList.isEmpty()) {
-            UpdateUserProfileResponse response = new UpdateUserProfileResponse();
             response.setSuccess(false);
             response.setMessage(MessageId.E0000, "Validation errors occurred");
+            response.setDetailErrorList(detailErrorList);
             return response;
         }
         return null;
@@ -93,25 +89,36 @@ public class UpdateUserProfileController extends AbstractApiController<UpdateUse
      * @param request the request to update
      * @param user the user to update
      */
-    private void updateUserInformation(UpdateUserProfileRequest request, UserAccount user) {
+    private void updateCustomerInformation(UpdateUserProfileRequest request, UserAccount user, Customer customerInformation) {
+        if (request.getPhoneNumber() != null) {
+            user.setPhoneNumber(request.getPhoneNumber());
+        }
+        if (request.getAvatarUrl() != null) {
+            user.setAvatarUrl(request.getAvatarUrl());
+        }
+        if (request.getGender() != null) {
+            user.setGender(request.getGender());
+        }
+        if (customerInformation != null){
+            if (request.getDateOfBirth() != null) {
+                customerInformation.setDateOfBirth(request.getDateOfBirth());
+            }
             if (request.getFullName() != null) {
-                user.setFullName(request.getFullName());
+                customerInformation.setFullName(request.getFullName());
             }
             if (request.getNickName() != null) {
-                user.setNickName(request.getNickName());
+                customerInformation.setNickName(request.getNickName());
             }
-            if (request.getPhoneNumber() != null) {
-                user.setPhoneNumber(request.getPhoneNumber());
-            }
-            if (request.getAvatarUrl() != null) {
-                user.setAvatarUrl(request.getAvatarUrl());
-            }
-            if (request.getGender() != null) {
-                user.setGender(request.getGender());
-            }
-            if (request.getDateOfBirth() != null) {
-                user.setDateOfBirth(request.getDateOfBirth());
-            }
+        } else {
+            customerInformation =  Customer.builder()
+                    .userId(user.getUserId())
+                    .fullName(request.getFullName())
+                    .nickName(request.getNickName())
+                    .dateOfBirth(request.getDateOfBirth())
+                    .build();
+        }
+        userRepository.save(user);
+        customerRepository.save(customerInformation);
     }
 
     /**
@@ -120,22 +127,33 @@ public class UpdateUserProfileController extends AbstractApiController<UpdateUse
      * @param address the address to update
      * @param userId the user id
      */
-    private void updateAddressUser(UpdateUserProfileRequest request, Address address, Long userId) {
-        if (request.getAddressLine() != null) {
-            address.setAddressLine(request.getAddressLine());
+    private void updateAddressUser(UpdateUserProfileRequest request, UserAccount user, Address address) {
+        if (address != null){
+            if (request.getAddressLine() != null) {
+                address.setAddressLine(request.getAddressLine());
+            }
+            if (request.getCity() != null) {
+                address.setCity(request.getCity());
+            }
+            if (request.getState() != null) {
+                address.setState(request.getState());
+            }
+            if (request.getCountry() != null) {
+                address.setCountry(request.getCountry());
+            }
+            if (request.getZipCode() != null) {
+                address.setZipCode(request.getZipCode());
+            }
+        } else {
+            address = Address.builder()
+                    .addressLine(request.getAddressLine())
+                    .city(request.getCity())
+                    .state(request.getState())
+                    .country(request.getCountry())
+                    .zipCode(request.getZipCode())
+                    .userId(user.getUserId())
+                    .build();
         }
-        if (request.getCity() != null) {
-            address.setCity(request.getCity());
-        }
-        if (request.getState() != null) {
-            address.setState(request.getState());
-        }
-        if (request.getCountry() != null) {
-            address.setCountry(request.getCountry());
-        }
-        if (request.getZipCode() != null) {
-            address.setZipCode(request.getZipCode());
-        }
-        address.setUserId(userId);
+        addressRepository.save(address);
     }
 }
