@@ -78,12 +78,14 @@ public class RegisterScreenController extends AbstractApiController<RegisterScre
      */
     @Override
     protected RegisterScreenResponse validate(RegisterScreenRequest request, List<DetailError> detailErrorList) {
+        var response = new RegisterScreenResponse();
         if (!detailErrorList.isEmpty()) {
-            RegisterScreenResponse response = new RegisterScreenResponse();
             response.setSuccess(false);
             response.setMessage(MessageId.E0000, "Validation errors occurred");
             return response;
         }
-        return null;
+        // True
+        response.setSuccess(true);
+        return response;
     }
 }
