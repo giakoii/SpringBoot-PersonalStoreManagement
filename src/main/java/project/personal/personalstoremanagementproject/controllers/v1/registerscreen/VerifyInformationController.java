@@ -38,7 +38,6 @@ public class VerifyInformationController extends AbstractApiController<VerifyInf
     @Override
     protected VerifyInformationResponse exec(VerifyInformationRequest request) throws Exception {
         var response = new VerifyInformationResponse();
-
         // Check if the key is valid
         String key = stringUtil.decrypt(request.getKey());
         // Find user by userId
@@ -52,18 +51,13 @@ public class VerifyInformationController extends AbstractApiController<VerifyInf
             return response;
         }
         // Check user first created
-        if (user.get().getLastLogin() == null){
-            if (user.get().getCreatedAt().isBefore(LocalDateTime.now().minusDays(1))) {
+        if (user.get().getLastLogin() == null && user.get().getCreatedAt().isBefore(LocalDateTime.now().minusDays(1))) {
                 response.setSuccess(false);
                 response.setMessage(MessageId.E0000, "Key is invalid");
                 return response;
-            }
         }
-
-
         // Set active for user
         user.get().setIsActive(true);
-
         // True
         response.setSuccess(true);
         response.setMessage(MessageId.I0001);
@@ -78,12 +72,15 @@ public class VerifyInformationController extends AbstractApiController<VerifyInf
      */
     @Override
     protected VerifyInformationResponse validate(VerifyInformationRequest request, List<DetailError> detailErrorList) {
+        var response = new VerifyInformationResponse();
         if (!detailErrorList.isEmpty()) {
-            var response = new VerifyInformationResponse();
             response.setSuccess(false);
             response.setMessage(MessageId.E0000, "Validation errors occurred");
+            response.setDetailErrorList(detailErrorList);
             return response;
         }
-        return null;
+        // True
+        response.setSuccess(true);
+        return response;
     }
 }
