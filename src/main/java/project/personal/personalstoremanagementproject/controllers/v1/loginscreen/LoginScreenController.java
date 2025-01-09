@@ -8,7 +8,10 @@ import project.personal.personalstoremanagementproject.exceptions.DetailError;
 import project.personal.personalstoremanagementproject.repositories.UserRepository;
 import project.personal.personalstoremanagementproject.services.JwtService;
 import project.personal.personalstoremanagementproject.utils.MessageId;
+import project.personal.personalstoremanagementproject.utils.StringUtil;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -48,7 +51,6 @@ public class LoginScreenController extends AbstractApiController<LoginScreenRequ
             loginResponse.setMessage(MessageId.E0005);
             return loginResponse;
         }
-
         // Check if password is correct
         var passwordEncoder = new BCryptPasswordEncoder(10);
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
@@ -56,18 +58,17 @@ public class LoginScreenController extends AbstractApiController<LoginScreenRequ
             loginResponse.setMessage(MessageId.E0005);
             return loginResponse;
         }
-
         // Generate token and refresh token
         var token = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
-
         // Create LoginScreenEntity
         var loginEntity = LoginScreenModel.builder()
                 .token(token)
                 .refreshToken(refreshToken)
                 .expirationTime("24Hrs")
                 .build();
-
+        user.setLastLogin(Instant.now());
+        userRepository.save(user);
         // True
         loginResponse.setSuccess(true);
         loginResponse.setMessage(MessageId.I0001);
@@ -83,12 +84,14 @@ public class LoginScreenController extends AbstractApiController<LoginScreenRequ
      */
     @Override
     protected LoginScreenResponse validate(LoginScreenRequest request, List<DetailError> detailErrorList) {
+        var response = new LoginScreenResponse();
         if (!detailErrorList.isEmpty()) {
-            LoginScreenResponse response = new LoginScreenResponse();
             response.setSuccess(false);
             response.setMessage(MessageId.E0000);
             return response;
         }
-        return null;
+        // True
+        response.setSuccess(true);
+        return response;
     }
 }
