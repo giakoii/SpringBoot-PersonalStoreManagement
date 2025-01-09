@@ -28,12 +28,8 @@ public class Order extends BaseEntity{
     @Column(name = "TotalPrice", nullable = false, precision = 18, scale = 2)
     BigDecimal totalPrice;
 
-    @Nationalized
-    @Column(name = "OrderStatus", nullable = false, length = 50)
-    String orderStatus;
-
     @ColumnDefault("1")
-    @Column(name = "Status", nullable = false, length = 50)
+    @Column(name = "order_status", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
-    ConstantEnum.OrderStatus status;
+    ConstantEnum.OrderStatus orderStatus;
 }
