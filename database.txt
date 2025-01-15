@@ -241,3 +241,85 @@ VALUES
  'RegisterScreen',
  1);
 
+CREATE PROCEDURE CreateOrder
+    @CustomerId BIGINT,
+    @CreatedBy BIGINT,           -- user_id of user create (Customer)
+    @OrderDetails NVARCHAR(MAX) -- JSON contains list of product_id and quantity
+AS
+BEGIN
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- 1. Create new Order
+        INSERT INTO [order] (user_id, create_by, total_price, order_status, is_active, api_caller_id, create_at)
+        VALUES (@CustomerId, @CreatedBy, 0, 'PENDING', 1, 'InsertOrderScreen', GETDATE());
+        DECLARE @OrderId BIGINT;
+
+        -- 2. Get OrderId
+        SET @OrderId = SCOPE_IDENTITY();
+
+        -- 3. Loop through OrderDetails and insert into order_detail
+        DECLARE @ProductId BIGINT, @Quantity INT, @UnitPrice DECIMAL(18, 2), @SubTotal DECIMAL(18, 2);
+        DECLARE @TotalPrice DECIMAL(18, 2) = 0;
+
+        -- Cursor to loop through OrderDetails
+        DECLARE OrderCursor CURSOR FOR
+        SELECT productId, quantity
+        FROM OPENJSON(@OrderDetails)
+        WITH (
+            productId BIGINT,
+            quantity INT
+        );
+
+        OPEN OrderCursor;
+        FETCH NEXT FROM OrderCursor INTO @ProductId, @Quantity;
+
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            -- Get UnitPrice of Product
+            SELECT @UnitPrice = price
+            FROM product
+            WHERE product_id = @ProductId;
+
+            -- Check if Product not found
+            IF @UnitPrice IS NULL
+            BEGIN
+                ROLLBACK TRANSACTION;
+                THROW 50001, 'Product not found', 1;
+            END;
+
+            -- Calculate SubTotal
+            SET @SubTotal = @UnitPrice * @Quantity;
+
+            -- Insert into order_detail
+            INSERT INTO order_detail (order_id, product_id, quantity, unit_price, create_at, is_active)
+            VALUES (@OrderId, @ProductId, @Quantity, @UnitPrice, GETDATE(), 1);
+
+            -- Calculate TotalPrice
+            SET @TotalPrice = @TotalPrice + @SubTotal;
+
+            FETCH NEXT FROM OrderCursor INTO @ProductId, @Quantity;
+        END;
+
+        CLOSE OrderCursor;
+        DEALLOCATE OrderCursor;
+
+        -- 4. Update TotalPrice and OrderStatus for Order
+        UPDATE [order]
+        SET total_price = @TotalPrice,
+            order_status = 'COMPLETED'
+        WHERE order_id = @OrderId;
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0
+        BEGIN
+            ROLLBACK TRANSACTION;
+        END
+        -- log error
+        PRINT 'Error Number: ' + CAST(ERROR_NUMBER() AS NVARCHAR);
+        PRINT 'Error Line: ' + CAST(ERROR_LINE() AS NVARCHAR);
+        PRINT 'Error Message: ' + ERROR_MESSAGE();
+        THROW;
+    END CATCH
+END;
